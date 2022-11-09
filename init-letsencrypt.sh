@@ -5,10 +5,10 @@ if ! [ -x "$(command -v docker-compose)" ]; then
   exit 1
 fi
 
-domains=(solobob.org www.solobob.org) // 각자 등록한 도메인
+domains=("solobob.org", "www.solobob.org") 
 rsa_key_size=4096
 data_path="./data/certbot"
-email="{email}" # Adding a valid address is strongly recommended
+email="xoals4340@gmail.com" # Adding a valid address is strongly recommended
 staging=0 # Set to 1 if you're testing your setup to avoid hitting request limits
 
 if [ -d "$data_path" ]; then
