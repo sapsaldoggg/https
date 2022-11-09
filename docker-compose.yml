@@ -1,20 +1,31 @@
-version: '3.8'
-  nginx:
-    container_name: nginx
-    image: nginx:1.15-alpine
+version: "3"
+ 
+services:
+  webserver:
+    image: nginx:latest
+    container_name: proxy 
     restart: always
     ports:
-    - 80:80
-    - 443:443
+      - "80:80"
+      - "443:443"
     volumes:
-    - ./data/nginx/conf.d:/etc/nginx/conf.d
-    - ./data/certbot/conf:/etc/letsencrypt
-    - ./data/certbot/www:/var/www/certbot
-
-  certbot:
-    container_name: certbot
-    image: certbot/certbot:v0.36.0
+      - ./myweb:/usr/share/nginx/html
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./certbot-etc:/etc/letsencrypt
+ 
+  nginx:
+    image: nginx:latest
+    container_name: myweb
     restart: always
     volumes:
-      - ./data/certbot/conf:/etc/letsencrypt
-      - ./data/certbot/www:/var/www/certbot
+      - ./myweb:/usr/share/nginx/html
+ 
+  certbot:
+    depends_on:
+      - webserver
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./certbot-etc:/etc/letsencrypt
+      - ./myweb:/usr/share/nginx/html
+    command: certonly --dry-run --webroot --webroot-path=/usr/share/nginx/html --email xoals4340@gmail.com --agree-tos --no-eff-email --keep-until-expiring -d solobob.org -d www.solobob.org
